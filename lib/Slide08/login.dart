@@ -1,6 +1,7 @@
 import 'package:exercicios/Slide05/Exercicio-03/exercicio3-05.dart';
 import 'package:exercicios/Slide06/Exercicio-02/exercicio2-06.dart';
 import 'package:exercicios/Slide08/register.dart';
+import 'package:exercicios/Slide08/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,11 +17,13 @@ class LoginStatefulState extends State<Login> {
   bool _remember = false;
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  String _username = "";
 
   _loadData() async {
     final prefs = await SharedPreferences.getInstance();
     if(prefs.getString("email") == _email.text && prefs.getString("senha") == _password.text) {
       print("entrei");
+      _username = prefs.getString("nome") ?? "Erro";
       return true;
     } else {
       return false;
@@ -107,7 +110,7 @@ class LoginStatefulState extends State<Login> {
                         _loadData();
                         if(await _loadData()) {
                           Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => const Exercicio2_06())
+                            MaterialPageRoute(builder: (context) => Welcome(_username))
                           );
                         } else {
                           showDialog(
