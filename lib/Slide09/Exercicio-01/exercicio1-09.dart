@@ -12,31 +12,31 @@ class Home extends StatefulWidget {
 }
 
 class TelaBD extends State<Home>{
-  Future<Database> _recuperarBancoDados() async {
+  _recuperarBancoDados() async {
     final caminhoBD = await getDatabasesPath();
     final localBD = join(caminhoBD, "banco.bd");
-    return openDatabase(
+    Database database = await openDatabase(
         localBD,
         version: 1,
-        onCreate: (db, dbVersaoRecente) {
-          String sql = "CREATE TABLE usuarios ("
+        onCreate: (Database db,int version) async {
+          String sql = "CREATE TABLE IF NOT EXISTS usuarios("
               "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-              "nome VARCHAR, idade INTEGER";
-          db.execute(sql);
+              "nome VARCHAR, idade INTEGER)";
+          await db.execute(sql);
         }
     );
-    //print("Aberto " + retorno.isOpen.toString());
-
+    print("Aberto " + database.isOpen.toString());
+    return database;
   }
 
   _salvarDados(String nome, int idade) async {
-    Database bd = await _recuperarBancoDados();
-    print("Aberto " + bd.toString());
+    Database db = await _recuperarBancoDados();
+    print("Aberto " + db.toString());
     Map<String, dynamic> dadosUsuario = {
       "nome" : nome,
       "idade" : idade,
     };
-    int id = await bd.insert("usuarios", dadosUsuario);
+    int id = await db.insert("usuarios", dadosUsuario);
     print("Salvo: $id ");
   }
 
@@ -97,79 +97,83 @@ class TelaBD extends State<Home>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
+      body: ListView(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 46.0, left: 16, right: 16, bottom: 16),
-            child: TextField(
-              keyboardType: TextInputType.emailAddress,
-              controller: _nome,
-              decoration: const InputDecoration(
-                labelText: "Digite o nome",
-                filled: true,
-                fillColor: Color(0xffffffff),
+          Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 46.0, left: 16, right: 16, bottom: 16),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                controller: _nome,
+                decoration: const InputDecoration(
+                  labelText: "Digite o nome",
+                  filled: true,
+                  fillColor: Color(0xffffffff),
+                ),
+                style: const TextStyle(color: Colors.purple, fontSize: 20),
               ),
-              style: const TextStyle(color: Colors.purple, fontSize: 20),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              keyboardType: TextInputType.emailAddress,
-              controller: _idade,
-              decoration: const InputDecoration(
-                labelText: "Digite a idade",
-                filled: true,
-                fillColor: Color(0xffffffff),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                controller: _idade,
+                decoration: const InputDecoration(
+                  labelText: "Digite a idade",
+                  filled: true,
+                  fillColor: Color(0xffffffff),
+                ),
+                style: const TextStyle(color: Colors.purple, fontSize: 20),
               ),
-              style: const TextStyle(color: Colors.purple, fontSize: 20),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              keyboardType: TextInputType.emailAddress,
-              controller: _id,
-              decoration: const InputDecoration(
-                labelText: "Digite um id",
-                filled: true,
-                fillColor: Color(0xffffffff),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                keyboardType: TextInputType.emailAddress,
+                controller: _id,
+                decoration: const InputDecoration(
+                  labelText: "Digite um id",
+                  filled: true,
+                  fillColor: Color(0xffffffff),
+                ),
+                style: const TextStyle(color: Colors.purple, fontSize: 20),
               ),
-              style: const TextStyle(color: Colors.purple, fontSize: 20),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _salvarDados(_nome.text, int.parse(_idade.text));
-            },
-            child: const Text("Salvar um usuário"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _listarUsuarios();
-            },
-            child: const Text("Listar todos os usuários"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _listarUmUsuarios(_id.text as int);
-            },
-            child: const Text("Listar um usuário"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _atualizarUsuario(_id.text as int, _nome.text, _idade.text as int);
-            },
-            child: const Text("Atualizar um usuário"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              _excluirUsuario(_id.text as int);
-            },
-            child: const Text("Excluir um usuário"),
-          ),
-        ],
+            ElevatedButton(
+              onPressed: () {
+                _salvarDados(_nome.text, int.parse(_idade.text));
+              },
+              child: const Text("Salvar um usuário"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _listarUsuarios();
+              },
+              child: const Text("Listar todos os usuários"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _listarUmUsuarios(int.parse(_id.text));
+              },
+              child: const Text("Listar um usuário"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _atualizarUsuario(int.parse(_id.text), _nome.text, int.parse(_idade.text));
+              },
+              child: const Text("Atualizar um usuário"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _excluirUsuario(int.parse(_id.text));
+              },
+              child: const Text("Excluir um usuário"),
+            ),
+          ],
+        ),
+      ]
       ),
     );
   }
