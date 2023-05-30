@@ -1,16 +1,31 @@
 import 'package:exercicios/Slide05/Exercicio-03/exercicio3-05.dart';
+import 'package:exercicios/Slide06/Exercicio-02/exercicio2-06.dart';
+import 'package:exercicios/Slide08/register.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class Exercicio1_05 extends StatefulWidget {
-  const Exercicio1_05({Key ? key}) : super(key : key);
+class Login extends StatefulWidget {
+  const Login({Key ? key}) : super(key : key);
 
   @override
-  State<StatefulWidget> createState() => Exercicio1_05StatefulState();
+  State<StatefulWidget> createState() => LoginStatefulState();
 }
 
-class Exercicio1_05StatefulState extends State<Exercicio1_05> {
+class LoginStatefulState extends State<Login> {
   bool _secret = true;
   bool _remember = false;
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+
+  _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.getString("email") == _email.text && prefs.getString("senha") == _password.text) {
+      print("entrei");
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +35,7 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
       body: Center(
           child: Container(
             decoration: const BoxDecoration(
-              image: DecorationImage(image: AssetImage("assets/images/chowchow.jpg"), fit: BoxFit.cover),
+              image: DecorationImage(image: AssetImage("assets/images/chowchow2.jpg"), fit: BoxFit.cover),
             ),
             child: Align(
               alignment: Alignment.center,
@@ -29,11 +44,12 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(bottom: 15.0),
                       child: TextField(
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
+                        controller: _email,
+                        decoration: const InputDecoration(
                           labelText: "Email",
                           filled: true,
                           fillColor: Color(0xffffffff),
@@ -47,6 +63,7 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                           width: 250,
                           child: TextField(
                             obscureText: _secret,
+                            controller: _password,
                             decoration: const InputDecoration(
                               labelText: "Password",
                               filled: true,
@@ -86,7 +103,28 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: (){},
+                      onPressed: () async {
+                        _loadData();
+                        if(await _loadData()) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => const Exercicio2_06())
+                          );
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  title: Text("Dados inválidos"),
+                                  titleTextStyle: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.red,
+                                  ),
+                                  content: Text("Usuário e/ou senha incorreto(a)"),
+                                );
+                              }
+                          );
+                        }
+                      },
                       child: const Text("Enter"),
                     ),
                     Row(
@@ -96,7 +134,7 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                         TextButton(
                           onPressed: (){
                             Navigator.of(context).push(
-                              MaterialPageRoute(builder: (context) => const Exercicio3_05()),
+                              MaterialPageRoute(builder: (context) => Register()),
                             );
                           },
                           child: const Text("Create an account", style: TextStyle(color: Colors.green),),

@@ -1,16 +1,32 @@
+import 'dart:ffi';
+
 import 'package:exercicios/Slide05/Exercicio-03/exercicio3-05.dart';
 import 'package:flutter/material.dart';
 
-class Exercicio1_05 extends StatefulWidget {
-  const Exercicio1_05({Key ? key}) : super(key : key);
+class Exercicio2_07 extends StatefulWidget {
+  const Exercicio2_07({Key ? key}) : super(key : key);
 
   @override
-  State<StatefulWidget> createState() => Exercicio1_05StatefulState();
+  State<StatefulWidget> createState() => Exercicio2_07StatefulState();
 }
 
-class Exercicio1_05StatefulState extends State<Exercicio1_05> {
+class Exercicio2_07StatefulState extends State<Exercicio2_07> {
   bool _secret = true;
   bool _remember = false;
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+
+
+  String getName(String email) {
+    String result = "";
+    for(int i=0; i<email.length; i++) {
+      if(email[i] == "@") {
+        result = email.substring(0, i);
+        result = result[0].toUpperCase() + result.substring(1);
+      }
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,21 +40,22 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
             ),
             child: Align(
               alignment: Alignment.center,
-              child: Container(
+              child: SizedBox(
                 width: 300,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 15.0),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 15.0),
                       child: TextField(
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
+                        controller: _email,
+                        decoration: const InputDecoration(
                           labelText: "Email",
                           filled: true,
                           fillColor: Color(0xffffffff),
                         ),
-                        style: TextStyle(color: Colors.purple, fontSize: 20),
+                        style: const TextStyle(color: Colors.purple, fontSize: 20),
                       ),
                     ),
                     Row(
@@ -47,6 +64,7 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                           width: 250,
                           child: TextField(
                             obscureText: _secret,
+                            controller: _password,
                             decoration: const InputDecoration(
                               labelText: "Password",
                               filled: true,
@@ -86,7 +104,27 @@ class Exercicio1_05StatefulState extends State<Exercicio1_05> {
                       ],
                     ),
                     ElevatedButton(
-                      onPressed: (){},
+                      onPressed: (){
+                        if(_email.text == "eu@gmail.com" && _password.text == "1234") {
+                          setState(() {
+                            Navigator.of(context).pushNamed("/exercicio1", arguments: getName(_email.text));
+                          });
+                        } else {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return const AlertDialog(
+                                  title: Text("Dados inválidos"),
+                                  titleTextStyle: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.red,
+                                  ),
+                                  content: Text("Usuário e/ou senha incorreto(a)"),
+                                );
+                              }
+                          );
+                        }
+                      },
                       child: const Text("Enter"),
                     ),
                     Row(
