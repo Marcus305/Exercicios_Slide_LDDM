@@ -16,7 +16,7 @@ class _Exercicio1_07StatefulState extends State<Exercicio1_07> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text("Bem vindo(a), $name"),
+          title: Text("Bem vindo(a) $name"),
         ),
         body: Container(
           padding: const EdgeInsets.all(20),

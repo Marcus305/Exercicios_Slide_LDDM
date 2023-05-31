@@ -204,6 +204,23 @@ class RegisterStatefulState extends State<Register> {
                     child: Text("Register", style: TextStyle(fontSize: _fontSize)),
                   ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40),
+                              ))),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Voltar", style: TextStyle(fontSize: _fontSize)),
+                    ),
+                  ),
+                ),
                 Row(
                   children: [
                     Text("Fontsize", style: TextStyle(fontSize: _fontSize)),
